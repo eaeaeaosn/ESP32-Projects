@@ -1,4 +1,4 @@
-from machine import Pin, I2C
+from machine import Pin, I2C, PWM
 from time import sleep
 import neopixel
 
@@ -7,6 +7,9 @@ MPU6050_ADDR = 0x68
 MPU6050_ACCEL_CONFIG = 0x1C
 PWR_MGMT_1 = 0x6B
 led = Pin(2, Pin.OUT)
+pwm_red = PWM(16,freq=50)
+pwm_green = PWM(17,freq=50)
+pwm_blue = PWM(18,freq=50)
 
 i2c.writeto(MPU6050_ADDR,bytearray([MPU6050_ACCEL_CONFIG,0x00]))
 i2c.writeto(MPU6050_ADDR,bytearray([PWR_MGMT_1,0x00]))
@@ -43,6 +46,10 @@ while True:
         Accel_Z = int.from_bytes(Accel_Z,"big")
     
     print("x: %4.2f, y: %4.2f, z: %4.2f" % ((Accel_X)/16384,(Accel_Y)/16384,(Accel_Z)/16384))
+    
+    pwm_red.duty_u16(abs(Accel_X*2))
+    pwm_green.duty_u16(abs(Accel_Y*2))
+    pwm_blue.duty_u16(abs(Accel_Z*2))
     
     sleep(0.5)
     counter += 0.5
