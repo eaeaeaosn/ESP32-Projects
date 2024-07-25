@@ -6,12 +6,18 @@ i2c = I2C(1,scl=Pin(22),sda=Pin(21))
 MPU6050_ADDR = 0x68
 MPU6050_ACCEL_CONFIG = 0x1C
 PWR_MGMT_1 = 0x6B
+led = Pin(2, Pin.OUT)
 
 i2c.writeto(MPU6050_ADDR,bytearray([MPU6050_ACCEL_CONFIG,0x00]))
 i2c.writeto(MPU6050_ADDR,bytearray([PWR_MGMT_1,0x00]))
 
-#counter = 0
+counter = 0
 while True:
+    if counter%1 == 0:
+        led.value(0)
+    else:
+        led.value(1)
+        
     Accel_X = bytearray(2)
     i2c.writeto(MPU6050_ADDR,bytearray([0x3B]))
     Accel_X = i2c.readfrom(MPU6050_ADDR,2)    
@@ -37,6 +43,6 @@ while True:
         Accel_Z = int.from_bytes(Accel_Z,"big")
     
     print("x: %4.2f, y: %4.2f, z: %4.2f" % ((Accel_X)/16384,(Accel_Y)/16384,(Accel_Z)/16384))
-  
-    #time.sleep(1)
-    #counter += 1
+    
+    sleep(0.5)
+    counter += 0.5
